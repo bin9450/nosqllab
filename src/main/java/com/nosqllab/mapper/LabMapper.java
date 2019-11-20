@@ -26,6 +26,12 @@ public interface LabMapper {
     @Select("select * from tb_course limit #{start}, #{end}")
     List<Course> findAllCourse(@Param("start") int start, @Param("end") int end);
 
+    @Results(id="coutseMap", value={
+            @Result(property = "courseStock", column = "course_stock")
+    })
+    @Select("select * from tb_course where cid =#{cid}")
+    Course findCourseById(@Param("cid") Long cid);
+
     @Select("select * from tb_teacher limit #{start}, #{end}")
     List<Teacher> findAllTeacher(@Param("start") int start, @Param("end") int end);
 
@@ -40,6 +46,8 @@ public interface LabMapper {
     @Insert("INSERT INTO tb_teacher (`tid`, `name`, `sex`, `age`, `dname`) \n" +
             "VALUES (#{tid},#{name},#{sex},#{age},#{dname}) ")
     int insertTeacher(Teacher teacher);
+
+
 
 
 }

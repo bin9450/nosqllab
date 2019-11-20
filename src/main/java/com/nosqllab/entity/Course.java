@@ -15,4 +15,5 @@ public class Course {
     private String name;
     private Long fcid;
     private Integer credit;
+    private Integer courseStock;
 }
