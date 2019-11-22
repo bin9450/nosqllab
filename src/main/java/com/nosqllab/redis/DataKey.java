@@ -15,4 +15,6 @@ public class DataKey extends BasePrefix {
     public static DataKey getStudent = new DataKey(60, "s");
     public static DataKey getTeacher = new DataKey(60, "t");
     public static DataKey isCourseOver = new DataKey(0, "go");
+    public static DataKey getCourseStock = new DataKey(0, "gs");
+    public static DataKey selCourse = new DataKey(0, "sc");
 }

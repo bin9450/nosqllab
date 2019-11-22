@@ -23,6 +23,7 @@ public class SelectCourseServiceImpl implements SelectCourseService{
     @Autowired
     SelectCourseMapper selectCourseMapper;
 
+
     @Override
     @Transactional
     public void selectCourse(Student student, Course course) {
@@ -32,10 +33,26 @@ public class SelectCourseServiceImpl implements SelectCourseService{
             StudentCourse studentCourse = new StudentCourse();
             studentCourse.setCid(course.getCid());
             studentCourse.setSid(student.getSid());
+            redisService.set(DataKey.selCourse, String.valueOf(course.getCid()+student.getSid()), "1");
             selectCourseMapper.insertStudentCourse(studentCourse);
         }else {
             setCourseOver(course.getCid());
             return ;
+        }
+    }
+
+    @Override
+    public long getSeckillResult(long cid, long sid){
+        StudentCourse studentCourse = selectCourseMapper.getStudentCourseById(cid, sid);
+        if (studentCourse != null){
+            return studentCourse.getScid();
+        }else{
+            boolean isOver = getCourseOver(cid);
+            if(isOver) {
+                return -1;
+            }else {
+                return 0;
+            }
         }
     }
 

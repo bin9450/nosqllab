@@ -16,7 +16,7 @@ public interface SelectCourseMapper {
 
     @Insert("INSERT INTO `tb_student_course` ( `sid`, `cid`, `score`,`tid`) \n" +
             "VALUES(#{sid},#{cid},#{score},#{tid}) ")
-    @SelectKey(keyColumn = "id", keyProperty = "id", resultType = long.class, before = false, statement = "select last_insert_id()")
+    @SelectKey(keyColumn = "scid", keyProperty = "scid", resultType = long.class, before = false, statement = "select last_insert_id()")
     Long insertStudentCourse(StudentCourse studentCourse);
 
     @Update("UPDATE  `tb_course` \n" +
@@ -24,6 +24,6 @@ public interface SelectCourseMapper {
             "WHERE `cid` = #{cid} ")
     int reduceCount(@Param("cid") Long cid);
 
-    @Select("select * from tb_student_course where scid = #{scid} and sid = #{sid}")
-    StudentCourse getStudentCourseById(@Param("scid")long scid, @Param("sid") long sid);
+    @Select("select * from tb_student_course where cid = #{cid} and sid = #{sid}")
+    StudentCourse getStudentCourseById(@Param("cid") long cid, @Param("sid") long sid);
 }

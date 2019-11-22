@@ -13,4 +13,5 @@ public interface SelectCourseService {
     void selectCourse(Student student, Course course);
     void setCourseOver(Long cid);
     boolean getCourseOver(long cid);
+    long getSeckillResult(long cid, long sid);
 }

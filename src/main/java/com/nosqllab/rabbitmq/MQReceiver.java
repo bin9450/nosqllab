@@ -5,7 +5,10 @@ import com.nosqllab.entity.Student;
 import com.nosqllab.entity.StudentCourse;
 import com.nosqllab.mapper.LabMapper;
 import com.nosqllab.mapper.SelectCourseMapper;
+import com.nosqllab.redis.DataKey;
 import com.nosqllab.redis.RedisService;
+import com.nosqllab.result.CodeMsg;
+import com.nosqllab.result.Result;
 import com.nosqllab.service.SelectCourseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +48,10 @@ public class MQReceiver {
         }
 
         //判断重复选课
+        String isSel = redisService.get(DataKey.selCourse, String.valueOf(cid+s.getSid()), String.class);
+        if ("1".equals(isSel)){
+            return ;
+        }
         StudentCourse studentCourse = selectCourseMapper.getStudentCourseById(cid, s.getSid());
         if(studentCourse != null) {
             return;
