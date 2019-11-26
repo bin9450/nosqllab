@@ -6,6 +6,7 @@ import com.nosqllab.entity.Teacher;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -47,7 +48,44 @@ public interface LabMapper {
             "VALUES (#{tid},#{name},#{sex},#{age},#{dname}) ")
     int insertTeacher(Teacher teacher);
 
+// <trim prefix= 'set' suffixOverrides= ','> </trim>
+    @Update("<script> UPDATE `tb_student` <set> " +
+            " <if test='name!=null and name != \"\"  '>  `name` =#{name},  </if> " +
+            " <if test='sex!=null and sex != \"\"  '>  `sex` = #{sex}, </if>" +
+            " <if test='age!=null and age != \"\"  '> `age` = #{age}, </if>" +
+            " <if test='birthday!=null and birthday != \"\"  '>  `birthday` = #{birthday},  </if>" +
+            " <if test='dname!=null and dname != \"\" '>  `dname` = #{dname}, </if>" +
+            " <if test='stuClass!=null and stuClass != \"\" '>  `class` = #{stuClass},  </if>" +
+            " </set> WHERE `sid` =  #{sid}    </script>")
+    int updateStudent(Student student);
 
+    @Update("<script> UPDATE `tb_teacher` <set>  " +
+            " <if test='name!=null and name != \"\"  '>  `name` =#{name}  </if> " +
+            " <if test='sex!=null and sex != \"\"  '>  `sex` = #{sex} </if>" +
+            " <if test='age!=null and age != \"\"  '> `age` = #{age} </if>" +
+            " <if test='dname!=null and dname != \"\"  '> `dname` = #{dname} </if>" +
+            "</set>  WHERE `tid` = #{tid}  </script>")
+    int updateTeacher(Teacher teacher);
 
+    @Update("<script> UPDATE `tb_course`  <set> " +
+            " <if test='name!=null and name != \"\"  '>  `name` =#{name}  </if> " +
+            " <if test='fcid!=null and fcid != \"\"  '>  `fcid` = #{fcid} </if>" +
+            " <if test='credit!=null and credit != \"\"  '> `credit` = #{credit} </if>" +
+            " <if test='courseStock!=null and courseStock != \"\"  '> `course_stock` = #{courseStock} </if>" +
+            "</set>  WHERE `cid` = #{cid}  </script>")
+    int updateCourse(Course course);
+
+    @Results(id="courseMap", value={
+            @Result(property = "courseStock", column = "course_stock")
+    })
+
+    @Select("SELECT tb_course.* ,tb_temp.num as num FROM tb_course," +
+            "(SELECT DISTINCT cid,COUNT(*) AS num FROM tb_student_course GROUP BY cid) AS tb_temp\n" +
+            " WHERE tb_course.`cid` = tb_temp.cid  LIMIT #{start}, #{end} ")
+    List<Course> findSelCourse(@Param("start") int start, @Param("end") int end);
+    @Select("SELECT tb_course.* ,score  FROM tb_course,(SELECT cid,MAX(score) AS score  FROM tb_student_course  " +
+            "WHERE sid = #{sid}  ) AS tb_temp\n" +
+            "WHERE tb_course.`cid` = tb_temp.cid")
+    HashMap<String,Object> findMaxCourse(@Param("sid") long sid);
 
 }

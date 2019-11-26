@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html ng-app="App">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+
+    <style>
+        .css1{
+            background-color: red;
+        }
+
+        .css2{
+            background-color: brown;
+        }
+
+    </style>
+</head>
+<body ng-controller="Demo">
+
+
+
+<form style="border: solid white; width: 300px;" ng-show="updateShow">
+    <p><label class="label_input">学号</label><input type="text" id="sid" name="id" class="text_field"/></p>
+    <p><label class="label_input">姓名</label><input type="text" id="name" name="id" class="text_field"/></p>
+    <p><label class="label_input">年龄</label><input type="text" id="age" name="name" class="text_field"/></p>
+    <p><label class="label_input">性别</label><input type="text" id="sex" name="name" class="text_field"/></p>
+    <p><label class="label_input">生日</label><input type="date" id="birthday" name="publish" class="text_field"/></p>
+    <p><label class="label_input">学院</label><input type="text" id="dname" name="effective" class="text_field"/></p>
+    <p><label class="label_input">班级</label><input type="text" id="stuClass" name="issueUnit" class="text_field"/></p>
+
+
+</form>
+
+<button type="button" value="提交" onclick="pleaseSubmit()">提交</button>
+<script src="../third-party/jquery/jquery-2.1.4.min.js"></script>
+<script src="../third-party/bootstrap3.3.7dist/js/bootstrap.min.js"></script>
+<script>
+    //获取url参数
+    function getQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return unescape(r[2]);
+        return null;
+    }
+
+    function pleaseSubmit() {
+        var sid = $("#sid").val();
+        var name = $("#name").val();
+        var age = $("#age").val();
+        var sex = $("#sex").val();
+        var birthday = $("#birthday").val();
+        var dname = $("#dname").val();
+        var stuClass = $("#stuClass").val();
+
+        console.log("start ajax");
+        $.ajax({
+            url: '/lab/insertStudent',
+            dataType: 'json',
+            type: 'post',
+            data: {
+                sid:sid,
+                name: name,
+                age: age,
+                sex:sex,
+                birthday: birthday,   //这里 : 前面一定要和json里面的字段一致.
+                dname: dname,
+                stuClass:stuClass
+            },
+            success: function (data) {
+                console.log(data)
+                if(data.code==421) {
+                    alert("success!");
+                }
+
+            }
+        })
+
+    };
+
+</script>
+
+
+</body>
+</html>

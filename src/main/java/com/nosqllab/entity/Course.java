@@ -16,4 +16,5 @@ public class Course {
     private Long fcid;
     private Integer credit;
     private Integer courseStock;
+    private Integer num;
 }

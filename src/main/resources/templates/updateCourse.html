@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html ng-app="App">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+
+    <style>
+        .css1{
+            background-color: red;
+        }
+
+        .css2{
+            background-color: brown;
+        }
+
+    </style>
+</head>
+<body ng-controller="Demo">
+
+
+
+<form style="border: solid white; width: 300px;" ng-show="updateShow">
+    <p><label class="label_input">课程</label><input type="text" id="name" name="name" class="text_field"/></p>
+    <p><label class="label_input">基础课程号</label><input type="text" id="fcid" name="name" class="text_field"/></p>
+    <p><label class="label_input">学分</label><input type="text" id="credit" name="publish" class="text_field"/></p>
+    <p><label class="label_input">课程余量</label><input type="text" id="courseStock" name="effective" class="text_field"/></p>
+
+
+</form>
+
+<button type="button" value="提交" onclick="pleaseSubmit()">提交</button>
+<script src="../third-party/jquery/jquery-2.1.4.min.js"></script>
+<script src="../third-party/bootstrap3.3.7dist/js/bootstrap.min.js"></script>
+<script>
+    //获取url参数
+    function getQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return unescape(r[2]);
+        return null;
+    }
+
+    function pleaseSubmit() {
+        var cid = getQueryString("cid");
+        var name = $("#name").val();
+        var fcid = $("#fcid").val();
+        var credit = $("#credit").val();
+        var courseStock = $("#courseStock").val();
+
+        console.log("start ajax");
+        $.ajax({
+            url: '/lab/updateCourse',
+            dataType: 'json',
+            type: 'post',
+            data: {
+                cid:cid,
+                name: name,
+                fcid: fcid,
+                credit:credit,
+                courseStock: courseStock
+            },
+            success: function (data) {
+                console.log(data)
+                if(data.code==421) {
+                    alert("success!");
+                }
+
+            }
+        })
+
+    };
+
+</script>
+
+
+</body>
+</html>

@@ -25,11 +25,10 @@ public class SelectCourseServiceImpl implements SelectCourseService{
 
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void selectCourse(Student student, Course course) {
         int success = selectCourseMapper.reduceCount(course.getCid());
         if (success != 0){
-            //下订单 写入秒杀订单
             StudentCourse studentCourse = new StudentCourse();
             studentCourse.setCid(course.getCid());
             studentCourse.setSid(student.getSid());

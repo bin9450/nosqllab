@@ -2,10 +2,12 @@ package com.nosqllab.service.impl;
 
 
 
+import com.google.common.util.concurrent.RateLimiter;
 import com.nosqllab.entity.Course;
 import com.nosqllab.entity.Student;
 import com.nosqllab.entity.Teacher;
 import com.nosqllab.mapper.LabMapper;
+import com.nosqllab.rabbitmq.MQSender;
 import com.nosqllab.redis.DataKey;
 import com.nosqllab.redis.RedisService;
 import com.nosqllab.result.CodeMsg;
@@ -16,10 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
-
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -35,7 +35,8 @@ public class LabServiceImpl implements LabService {
     FileUtil fileUtil;
     @Autowired
     RedisService redisService;
-
+    @Autowired
+    MQSender mqSender;
     @Override
     public Result<Object> findAllData(int page, int pageSize, int moudleCode) {
         List<?> resultList = new ArrayList<>();
@@ -79,13 +80,57 @@ public class LabServiceImpl implements LabService {
            resultInsert = labMapper.insertTeacher((Teacher) data);
        }else {
            resultInsert = labMapper.insertCourse((Course) data);
-           System.out.println(resultInsert);
        }
        if (resultInsert == 0){
            return Result.error(CodeMsg.SERVICE_INSERT_ERROR);
        }else {
            return Result.success(CodeMsg.SERVICE_INSERT_OK);
        }
+    }
+
+    @Override
+    public <T> Result<Object> updateData(T data) {
+        RateLimiter rateLimiter = RateLimiter.create(10);
+        if (!rateLimiter.tryAcquire(1000, TimeUnit.MILLISECONDS)) {
+            return  Result.error(CodeMsg.ACCESS_LIMIT_REACHED);
+        }else {
+            mqSender.sendUpdate(data);
+        }
+        return Result.success(CodeMsg.SERVICE_UPDATE_OK);
+    }
+
+    @Override
+    public Result<Object> findSelCourse(int page, int pageSize) {
+        List<Course> resultList = new ArrayList<>();
+        String keyCache = String.valueOf(page) + "&" + String.valueOf(pageSize);
+        resultList = redisService.get(DataKey.findData, keyCache , List.class);
+        if (resultList == null){
+            resultList = labMapper.findSelCourse((page-1)*pageSize, pageSize);
+            redisService.set(DataKey.findData, keyCache, resultList);
+        }
+        System.out.println(resultList.getClass());
+        if (resultList.size() != 0){
+            return Result.success(CodeMsg.SELECT_OK,resultList);
+        }else {
+            return Result.error(CodeMsg.SELECT_ERROR);
+        }
+    }
+
+    @Override
+    public Result<Object> findMaxCourse(long sid) {
+        Map<String,Object> result = new HashMap<>();
+        String keyCache = String.valueOf(sid);
+        result = redisService.get(DataKey.findData, keyCache , HashMap.class);
+        if (result == null){
+            result = labMapper.findMaxCourse(sid);
+            redisService.set(DataKey.findData, keyCache, result);
+        }
+
+        if (result != null ){
+            return Result.success(CodeMsg.SELECT_OK,result);
+        }else {
+            return Result.error(CodeMsg.SELECT_ERROR);
+        }
     }
 
 

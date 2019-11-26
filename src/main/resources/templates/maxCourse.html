@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="stylesheet" href="../third-party/bootstrap3.3.7dist/css/bootstrap.min.css">
+    <script src="../third-party/jquery/jquery-2.1.4.min.js"></script>
+    <script src="../third-party/bootstrap3.3.7dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="../third-party/pagination.css">
+    <script type="text/javascript" src="../third-party/jquery.pagination.js"></script>
+    <link rel="stylesheet" href="../css/list-common.css">
+    <script type="text/javascript" src="../third-party/layer/layer.js"></script>
+    <title>最好课程</title>
+    <style type="text/css">
+
+    </style>
+    <script>
+        var itemsPerPage=10;
+        var pageIndex=0;
+
+        $(function (){
+            getRecordList(page);
+        });
+
+
+        //获取url参数
+        function getQueryString(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]);
+            return null;
+        }
+
+
+        var page = 1;
+        function getRecordList(page){
+            var sid =  getQueryString("sid");
+            $.ajax(
+                {
+                    url:'/lab/findMaxCourse?sid='+sid,
+                    dataType: "json",
+                    type: 'get',
+                    success:function (json) {
+                        displayRecordList(json.data);
+                    },
+                    error: function () {
+                        alert("web_getListPaging error page="+page);
+                    }
+                }
+            );
+        }
+
+
+        function  displayRecordList(json){
+            var recList='';
+
+                if (json.fcid == null){
+                    json.fcid = "无";
+                }
+                recList+=' <tr>'+
+                    '<td>'+json.cid+'</td>'+
+                    '<td>'+json.name+'</td>'+
+                    '<td>'+json.fcid+'</td>'+
+                    '<td>'+json.score+'</td>'+
+                    '<td>'+json.credit+'</td>'+
+                    '<td>'+json.course_stock+'</td>'+
+                +'</tr>';
+
+
+            $("#recordList").html(recList);
+
+            // $("#recordList").append(recList);
+        }
+
+
+
+
+
+    </script>
+</head>
+<body>
+<div class="main_info">
+    <div class="list_title">
+        <div class="title_caption">
+            <i class="glyphicon glyphicon-align-justify"></i>最好课程
+        </div>
+    </div>
+    <div class="list_toolbar">
+        <div class="toolbar_search">
+            <div class="input-group input_info">
+
+            </div>
+        </div>
+        <div class="toolbar_button">
+
+        </div>
+
+    </div>
+
+    <div class="content_table">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>课程号</th>
+                <th>课程</th>
+                <th></th>
+                <th>分数</th>
+                <th>学分</th>
+                <th>余量</th>
+            </tr>
+            </thead>
+            <tbody id="recordList">
+            </tbody>
+        </table>
+    </div>
+    <div class="content_floor">
+        <div id="pagination" class="pagination">
+
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="stylesheet" href="../third-party/bootstrap3.3.7dist/css/bootstrap.min.css">
+    <script src="../third-party/jquery/jquery-2.1.4.min.js"></script>
+    <script src="../third-party/bootstrap3.3.7dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="../third-party/pagination.css">
+    <script type="text/javascript" src="../third-party/jquery.pagination.js"></script>
+    <link rel="stylesheet" href="../css/list-common.css">
+    <script type="text/javascript" src="../third-party/layer/layer.js"></script>
+    <title>教师列表</title>
+    <style type="text/css">
+
+    </style>
+    <script>
+        var itemsPerPage=10;
+        var pageIndex=0;
+
+        $(function (){
+            getRecordList(page);
+        });
+
+
+
+
+
+        var page = 1;
+        function getRecordList(page){
+
+            $.ajax(
+                {
+                    url:'/lab/findAllData',
+                    dataType: "json",
+                    type: 'get',
+                    data:{"page":page,"pageSize":10,"moudleCode":2},
+                    success:function (json) {
+                        displayRecordList(json.data);
+                    },
+                    error: function () {
+                        alert("web_getListPaging error page="+page);
+                    }
+                }
+            );
+        }
+
+
+        function  displayRecordList(json){
+            var recList='';
+            for(var i=0;i<json.length;i++){
+                    console.log(json[i]);
+
+                recList+=' <tr>'+
+                    '<td>'+json[i].tid+'</td>'+
+                    '<td>'+json[i].name+'</td>'+
+                    '<td>'+json[i].sex+'</td>'+
+                    '<td>'+json[i].age+'</td>'+
+                    '<td>'+json[i].dname+'</td>'+
+                    '<td><button type="button" onclick="updateInfo('+json[i].tid+')">'+'修改信息'+'</button></td>'
+                +'</tr>';
+
+            }
+            $("#recordList").html(recList);
+            console.log(recList);
+            // $("#recordList").append(recList);
+        }
+
+        function updateInfo(tid){
+            layer.open({
+                type: 2,
+                skin: 'layui-layer-rim',
+                shadeClose:true ,
+                area: ['500px', '500px'],
+                title: ['输入教师信息','background:#0090D7;color:#FFFFFF;'],
+                shade: 0,
+                moveType: 0,
+                shift: 0,
+                content:'/updateTeacher?tid='+tid
+            });
+        }
+
+        function addRecord(){
+            layer.open({
+                type: 2,
+                skin: 'layui-layer-rim',
+                shadeClose:true ,
+                area: ['500px', '500px'],
+                title: ['输入教师信息','background:#0090D7;color:#FFFFFF;'],
+                shade: 0,
+                moveType: 0,
+                shift: 0,
+                content:'/addTeacher'
+            });
+        }
+
+
+
+
+    </script>
+</head>
+<body>
+<div class="main_info">
+    <div class="list_title">
+        <div class="title_caption">
+            <i class="glyphicon glyphicon-align-justify"></i>教师列表
+        </div>
+    </div>
+    <div class="list_toolbar">
+        <div class="toolbar_search">
+            <div class="input-group input_info">
+
+            </div>
+        </div>
+        <div class="toolbar_button">
+            <button type="button" class="btn btn-default" onclick="window.location.reload()">刷新列表</button>
+            <button type="button" class="btn btn-default" onclick="addRecord()">添加教师信息</button>
+        </div>
+
+    </div>
+
+    <div class="content_table">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>教师号</th>
+                <th>姓名</th>
+                <th>性别</th>
+                <th>年龄</th>
+                <th>学院</th>
+                <th>修改信息</th>
+            </tr>
+            </thead>
+            <tbody id="recordList">
+            </tbody>
+        </table>
+    </div>
+    <div class="content_floor">
+        <div id="pagination" class="pagination">
+            <button type="button" class="prev" onclick="last()">上一页</button>
+            <button type="button" class="prev" onclick="next()">下一页</button>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function last() {
+        if (page > 1){
+        page--;
+        $("#recordList").html("");
+        getRecordList(page)}
+    }
+    function next() {
+        page++;
+        $("#recordList").html("");
+        getRecordList(page)
+    }
+</script>
+
+
+</body>
+</html>

@@ -3,6 +3,7 @@ package com.nosqllab.rabbitmq;
 import com.nosqllab.entity.Course;
 import com.nosqllab.entity.Student;
 import com.nosqllab.entity.StudentCourse;
+import com.nosqllab.entity.Teacher;
 import com.nosqllab.mapper.LabMapper;
 import com.nosqllab.mapper.SelectCourseMapper;
 import com.nosqllab.redis.DataKey;
@@ -59,4 +60,18 @@ public class MQReceiver {
         //减余量 写入SC
         selectCourseService.selectCourse(s,course);
     }
+
+    @RabbitListener(queues = MQConfig.UPDATEQUEUE)
+    public  void receiveUpdate(String msg){
+        String type = msg.substring(0, 1);
+        String m = msg.substring(1, msg.length());
+       if("1".equals(type)){
+            labMapper.updateStudent(RedisService.stringToBean(m ,Student.class));
+        }else if ("2".equals(type)){
+            labMapper.updateTeacher(RedisService.stringToBean(m ,Teacher.class));
+        }else {
+            labMapper.updateCourse(RedisService.stringToBean(m ,Course.class));
+        }
+    }
+
 }

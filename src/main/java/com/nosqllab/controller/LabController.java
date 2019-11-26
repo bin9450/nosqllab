@@ -34,7 +34,6 @@ public class LabController {
 
     @PostMapping("insertStudent")
     Result<Object> insertStudent(Student student){
-        System.out.println(student.getBirthday());
         return labService.insertAllData(student);
     }
 
@@ -48,4 +47,28 @@ public class LabController {
         return labService.insertAllData(teacher);
     }
 
+    @PostMapping("updateStudent")
+    Result<Object> updateStudent(Student student){
+        return labService.updateData(student);
+    }
+
+    @PostMapping("updateCourse")
+    Result<Object> updateCourse(Course course){
+        return labService.updateData(course);
+    }
+
+    @PostMapping("updateTeacher")
+    Result<Object> updateTeacher(Teacher teacher){
+        return labService.updateData(teacher);
+    }
+
+    @GetMapping("findSelCourse")
+    Result<Object> findSelCourse(@RequestParam(defaultValue = "1") int page,  @RequestParam(defaultValue = "10")int pageSize){
+        return labService.findSelCourse(page, pageSize);
+    }
+
+    @GetMapping("findMaxCourse")
+    Result<Object> findMaxCourse(@RequestParam(defaultValue = "1") long sid){
+        return labService.findMaxCourse(sid);
+    }
 }

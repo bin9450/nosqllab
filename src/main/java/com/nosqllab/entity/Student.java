@@ -1,5 +1,6 @@
 package com.nosqllab.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,8 +19,10 @@ public class Student {
     private String name;
     private String sex;
     private Integer age;
+    @JsonFormat(pattern="yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date birthday;
     private String dname;
     private Integer stuClass;
+
 }

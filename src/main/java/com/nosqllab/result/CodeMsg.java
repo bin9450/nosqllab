@@ -17,10 +17,14 @@ public class CodeMsg {
     public static CodeMsg SERVICE_INSERT_OK = new CodeMsg(41, "插入成功");
     public static CodeMsg SERVICE_UPLOAD_ERROR= new CodeMsg(411, "上传失败");
     public static CodeMsg SERVICE_OPENFILE_ERROR= new CodeMsg(421, "打开失败");
+    public static CodeMsg SERVICE_UPDATE_OK= new CodeMsg(421, "更新成功");
+    public static CodeMsg SERVICE_UPDATE_ERROR= new CodeMsg(421, "更新失败");
     public static CodeMsg SERVICE_INSERT_ERROR= new CodeMsg(42, "插入失败");
     public static CodeMsg ACCESS_LIMIT_REACHED= new CodeMsg(500104, "访问高峰期，请稍等！");
     public static CodeMsg SELCOURSE_OVER = new CodeMsg(500500, "选课已经完毕");
     public static CodeMsg REPEATE_SELECT = new CodeMsg(500501, "不能重复选课");
+    public static CodeMsg SELECT_OK = new CodeMsg(500501, "查询成功");
+    public static CodeMsg SELECT_ERROR = new CodeMsg(500501, "查询失败");
 
     private CodeMsg() {
     }

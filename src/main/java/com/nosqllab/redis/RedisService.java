@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -55,6 +57,7 @@ public class RedisService {
                 jedis.set(realKey, str);
             } else {
                 jedis.setex(realKey, seconds, str);
+
             }
 
             return true;
@@ -126,7 +129,6 @@ public class RedisService {
         }
     }
 
-
     public static <T> String beanToString(T value) {
         if (value == null) {
             return null;
@@ -157,7 +159,9 @@ public class RedisService {
             return (T) str;
         } else if (clazz == List.class){
             return JSON.toJavaObject(JSON.parseArray(str), clazz);
-        } else {
+        }  else if(clazz == HashMap.class){
+            return (T) JSON.parse(str);
+        }else {
             return JSON.toJavaObject(JSON.parseObject(str), clazz);
         }
     }

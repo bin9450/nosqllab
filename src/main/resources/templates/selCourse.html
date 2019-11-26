@@ -1,0 +1,165 @@
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="stylesheet" href="../third-party/bootstrap3.3.7dist/css/bootstrap.min.css">
+    <script src="../third-party/jquery/jquery-2.1.4.min.js"></script>
+    <script src="../third-party/bootstrap3.3.7dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="../third-party/pagination.css">
+    <script type="text/javascript" src="../third-party/jquery.pagination.js"></script>
+    <link rel="stylesheet" href="../css/list-common.css">
+    <script type="text/javascript" src="../third-party/layer/layer.js"></script>
+    <title>课程列表</title>
+    <style type="text/css">
+
+    </style>
+    <script>
+        var itemsPerPage=10;
+        var pageIndex=0;
+
+        $(function (){
+            getRecordList(page);
+        });
+
+
+
+
+
+        var page = 1;
+        function getRecordList(page){
+
+            $.ajax(
+                {
+                    url:'/lab/findAllData',
+                    dataType: "json",
+                    type: 'get',
+                    data:{"page":page,"pageSize":10,"moudleCode":3},
+                    success:function (json) {
+                        displayRecordList(json.data);
+                    },
+                    error: function () {
+                        alert("web_getListPaging error page="+page);
+                    }
+                }
+            );
+        }
+
+
+        function  displayRecordList(json){
+            var recList='';
+            for(var i=0;i<json.length;i++){
+                    console.log(json[i]);
+                if (json[i].fcid == null){
+                    json[i].fcid = "无";
+                }
+                recList+=' <tr>'+
+                    '<td>'+json[i].cid+'</td>'+
+                    '<td>'+json[i].name+'</td>'+
+                    '<td>'+json[i].fcid+'</td>'+
+                    '<td>'+json[i].credit+'</td>'+
+                    '<td>'+json[i].courseStock+'</td>'+
+                    '<td><button type="button" onclick="updateInfo('+json[i].cid+')">'+'选课'+'</button></td>'
+                +'</tr>';
+
+            }
+            $("#recordList").html(recList);
+            console.log(recList);
+            // $("#recordList").append(recList);
+        }
+
+        function updateInfo(cid){
+            var sid =$("#keyWord").val()
+
+            $.ajax(
+                {
+                    url:'/selectCourse/doSelect',
+                    dataType: "json",
+                    type: 'get',
+                    data:{"sid":sid,
+                        "cid":cid},
+                    success:function (json) {
+                        if (json.code==500501){
+                            alert("不能重复成功");
+                        }else {
+                            alert("选课成功");
+                        }
+
+                    },
+                    error: function () {
+
+                    }
+                }
+            );
+        }
+
+    </script>
+</head>
+<body>
+<div class="main_info">
+    <div class="list_title">
+        <div class="title_caption">
+            <i class="glyphicon glyphicon-align-justify"></i>课程列表
+        </div>
+    </div>
+    <div class="list_toolbar">
+        <div class="toolbar_search">
+            <div class="input-group input_info">
+                <label style=" font-size: 14px; font-weight: 400;float:left; margin-top: 8px;margin-right: 6px;">输入学号</label>
+                <input type="text" class="form-control"
+                       style="height: 35px; font-size: 14px; width:200px; font-weight: 500px; margin-left: 0px;"
+                       id="keyWord" placeholder="输入学号"> <span class="input-group-addon input_button"
+                                                                 style="height: 35px; width: 35px;" onclick="search()">
+                        <img src="../images/find.png" onmouseover="this.src='../images/find3.png'" onmouseout="this.src='../images/find.png'">
+						</span>
+            </div>
+        </div>
+        <div class="toolbar_button">
+
+        </div>
+
+    </div>
+
+    <div class="content_table">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>课程号</th>
+                <th>课程</th>
+                <th>基础课程号</th>
+                <th>学分</th>
+                <th>课程余量</th>
+                <th>选课</th>
+            </tr>
+            </thead>
+            <tbody id="recordList">
+            </tbody>
+        </table>
+    </div>
+    <div class="content_floor">
+        <div id="pagination" class="pagination">
+            <button type="button" class="prev" onclick="last()">上一页</button>
+            <button type="button" class="prev" onclick="next()">下一页</button>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function last() {
+        if (page > 1){
+        page--;
+        $("#recordList").html("");
+        getRecordList(page)}
+    }
+    function next() {
+        page++;
+        $("#recordList").html("");
+        getRecordList(page)
+    }
+</script>
+
+
+</body>
+</html>
